@@ -1,0 +1,113 @@
+<% showHero = false; activeCategory = null; search = null; %>
+<%- include('partials/header') %>
+
+<div class="page-header">
+  <div class="container">
+    <h2 class="mb-0"><i class="bi bi-person-circle me-2"></i>My Profile</h2>
+  </div>
+</div>
+
+<div class="container py-4">
+  <div class="row g-4">
+    <!-- Sidebar -->
+    <div class="col-lg-3">
+      <div class="card border-0 shadow-sm text-center p-4" style="border-radius:12px;">
+        <div style="font-size:4rem;color:var(--cyan);"><i class="bi bi-person-circle"></i></div>
+        <h5 class="fw-bold mt-2 mb-0"><%= profileUser.firstName || '' %> <%= profileUser.lastName || '' %></h5>
+        <div class="text-muted small mb-3">@<%= profileUser.uName %></div>
+        <div class="text-muted small mb-1"><i class="bi bi-envelope me-1"></i><%= profileUser.email %></div>
+        <% if (profileUser.phone) { %>
+          <div class="text-muted small mb-1"><i class="bi bi-telephone me-1"></i><%= profileUser.phone %></div>
+        <% } %>
+        <div class="text-muted small"><i class="bi bi-calendar me-1"></i>Joined <%= new Date(profileUser.createdAt).toLocaleDateString('en-US', { year:'numeric', month:'long' }) %></div>
+        <hr />
+        <div class="d-grid gap-2">
+          <a href="/orders" class="btn btn-outline-primary btn-sm"><i class="bi bi-bag-check me-1"></i>Order History</a>
+          <a href="/wishlist" class="btn btn-outline-danger btn-sm"><i class="bi bi-heart me-1"></i>My Wishlist</a>
+          <a href="/cart" class="btn btn-outline-secondary btn-sm"><i class="bi bi-cart me-1"></i>My Cart</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Form -->
+    <div class="col-lg-9">
+      <% if (errors && errors.length) { %>
+        <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+          <% errors.forEach(function(e) { %><div><i class="bi bi-exclamation-circle me-1"></i><%= e %></div><% }); %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      <% } %>
+
+      <form action="/profile" method="POST" novalidate>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+        <!-- Personal Info -->
+        <div class="card border-0 shadow-sm mb-4" style="border-radius:12px;">
+          <div class="card-header bg-white fw-bold py-3" style="border-radius:12px 12px 0 0;">
+            <i class="bi bi-person me-2 text-primary"></i>Personal Information
+          </div>
+          <div class="card-body">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold small">First Name</label>
+                <input type="text" name="firstName" class="form-control" value="<%= profileUser.firstName || '' %>" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold small">Last Name</label>
+                <input type="text" name="lastName" class="form-control" value="<%= profileUser.lastName || '' %>" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold small">Username</label>
+                <input type="text" class="form-control" value="<%= profileUser.uName %>" disabled />
+                <div class="form-text">Username cannot be changed.</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold small">Email</label>
+                <input type="email" class="form-control" value="<%= profileUser.email %>" disabled />
+                <div class="form-text">Email cannot be changed.</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold small">Phone Number</label>
+                <input type="tel" name="phone" class="form-control" value="<%= profileUser.phone || '' %>" placeholder="+1 (555) 000-0000" />
+              </div>
+              <div class="col-12">
+                <label class="form-label fw-semibold small">Default Shipping Address</label>
+                <textarea name="address" class="form-control" rows="2" placeholder="123 Main St, City, State ZIP"><%= profileUser.address || '' %></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Change Password -->
+        <div class="card border-0 shadow-sm mb-4" style="border-radius:12px;">
+          <div class="card-header bg-white fw-bold py-3" style="border-radius:12px 12px 0 0;">
+            <i class="bi bi-lock me-2 text-primary"></i>Change Password <span class="text-muted fw-normal small">(leave blank to keep current)</span>
+          </div>
+          <div class="card-body">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label fw-semibold small">Current Password</label>
+                <input type="password" name="currentPassword" class="form-control" placeholder="Current password" autocomplete="current-password" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold small">New Password</label>
+                <input type="password" name="newPassword" class="form-control" placeholder="Min 8 characters" autocomplete="new-password" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold small">Confirm New Password</label>
+                <input type="password" name="confirmNewPassword" class="form-control" placeholder="Repeat new password" autocomplete="new-password" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex gap-3">
+          <button type="submit" class="btn btn-primary px-4"><i class="bi bi-check-lg me-2"></i>Save Changes</button>
+          <a href="/" class="btn btn-outline-secondary px-4">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

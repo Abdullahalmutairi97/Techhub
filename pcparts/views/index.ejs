@@ -1,0 +1,69 @@
+<%- include('partials/header') %>
+<div class="container py-4">
+  <div class="row justify-content-center mb-4">
+    <div class="col-lg-7">
+      <form action="/" method="GET">
+        <% if (activeCategory) { %><input type="hidden" name="category" value="<%= activeCategory %>" /><% } %>
+        <div class="search-bar-wrapper">
+          <input type="text" id="searchInput" name="search" placeholder="Search products, brands, specs..."
+            value="<%= typeof search !== 'undefined' && search ? search : '' %>" />
+          <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i></button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="category-filters d-flex flex-wrap gap-2 mb-4">
+    <a href="/" class="btn btn-sm btn-outline-secondary <%= !activeCategory ? 'active' : '' %>"><i class="bi bi-grid-3x3-gap me-1"></i>All</a>
+    <a href="/?category=CPU" class="btn btn-sm btn-outline-secondary <%= activeCategory === 'CPU' ? 'active' : '' %>"><i class="bi bi-cpu me-1"></i>CPU</a>
+    <a href="/?category=Motherboard" class="btn btn-sm btn-outline-secondary <%= activeCategory === 'Motherboard' ? 'active' : '' %>"><i class="bi bi-motherboard me-1"></i>Motherboard</a>
+    <a href="/?category=RAM" class="btn btn-sm btn-outline-secondary <%= activeCategory === 'RAM' ? 'active' : '' %>"><i class="bi bi-memory me-1"></i>RAM</a>
+    <a href="/?category=GPU" class="btn btn-sm btn-outline-secondary <%= activeCategory === 'GPU' ? 'active' : '' %>"><i class="bi bi-gpu-card me-1"></i>GPU</a>
+    <a href="/?category=Storage" class="btn btn-sm btn-outline-secondary <%= activeCategory === 'Storage' ? 'active' : '' %>"><i class="bi bi-device-hdd me-1"></i>Storage</a>
+    <a href="/?category=PSU" class="btn btn-sm btn-outline-secondary <%= activeCategory === 'PSU' ? 'active' : '' %>"><i class="bi bi-battery-charging me-1"></i>PSU</a>
+    <a href="/?category=Cooling" class="btn btn-sm btn-outline-secondary <%= activeCategory === 'Cooling' ? 'active' : '' %>"><i class="bi bi-thermometer-snow me-1"></i>Cooling</a>
+    <a href="/?category=Case" class="btn btn-sm btn-outline-secondary <%= activeCategory === 'Case' ? 'active' : '' %>"><i class="bi bi-box me-1"></i>Case</a>
+    <a href="/?category=Mini+PC" class="btn btn-sm btn-outline-secondary <%= activeCategory === 'Mini PC' ? 'active' : '' %>"><i class="bi bi-pc me-1"></i>Mini PC</a>
+  </div>
+
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h5 class="mb-0" style="font-weight:700;">
+      <% if (search) { %>Search results for "<strong><%= search %></strong>"
+      <% } else if (activeCategory) { %><i class="bi bi-tag me-1 text-primary"></i><%= activeCategory %>
+      <% } else { %><i class="bi bi-lightning-charge me-1 text-warning"></i>All Products<% } %>
+    </h5>
+    <span class="text-muted small"><%= products.length %> product<%= products.length !== 1 ? 's' : '' %></span>
+  </div>
+
+  <% if (products.length === 0) { %>
+    <div class="text-center py-5">
+      <i class="bi bi-search display-4 text-muted mb-3 d-block"></i>
+      <h4 class="text-muted">No products found</h4>
+      <p class="text-muted">Try a different search term or browse all categories.</p>
+      <a href="/" class="btn btn-primary">Browse All Products</a>
+    </div>
+  <% } else { %>
+    <div class="row g-3">
+      <% products.forEach(function(p) { %>
+        <div class="col-6 col-md-4 col-lg-3">
+          <a href="/product?id=<%= p.idP %>" class="product-card">
+            <img src="<%= p.photoPath %>" alt="<%= p.labelP %>" class="product-card-img"
+              onerror="this.src='https://placehold.co/400x200/1a1a2e/00d4ff?text=<%= encodeURIComponent(p.category) %>'" />
+            <div class="product-card-body">
+              <div class="d-flex align-items-center justify-content-between mb-1">
+                <span class="category-badge"><%= p.category %></span>
+                <% if (p.QtyP === 0) { %><span class="stock-badge-out">Out of Stock</span>
+                <% } else if (p.QtyP <= 5) { %><span class="stock-badge-low">Low Stock</span>
+                <% } else { %><span class="stock-badge-in">In Stock</span><% } %>
+              </div>
+              <div class="brand-name"><%= p.brand %></div>
+              <div class="product-name"><%= p.labelP %></div>
+              <div class="product-price">$<%= parseFloat(p.priceP).toFixed(2) %></div>
+            </div>
+          </a>
+        </div>
+      <% }); %>
+    </div>
+  <% } %>
+</div>
+<%- include('partials/footer') %>

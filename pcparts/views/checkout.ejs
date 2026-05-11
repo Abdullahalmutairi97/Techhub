@@ -1,0 +1,117 @@
+<% showHero = false; activeCategory = null; search = null; %>
+<%- include('partials/header') %>
+<div class="page-header"><div class="container"><h2 class="mb-0"><i class="bi bi-credit-card me-2"></i>Checkout</h2></div></div>
+<div class="container py-4">
+  <% if (!user) { %>
+    <div class="text-center py-5">
+      <i class="bi bi-lock display-3 text-muted mb-3 d-block"></i>
+      <h4>Please log in to checkout</h4>
+      <a href="/login" class="btn btn-primary btn-lg mt-3">Login</a>
+    </div>
+  <% } else if (!cartItems || cartItems.length === 0) { %>
+    <div class="text-center py-5">
+      <i class="bi bi-cart-x display-3 text-muted mb-3 d-block"></i>
+      <h4>Your cart is empty</h4>
+      <a href="/" class="btn btn-primary btn-lg mt-3">Shop Now</a>
+    </div>
+  <% } else { %>
+    <% const total = cartItems.reduce((s, i) => s + parseFloat(i.priceP) * i.quantity, 0); %>
+    <% if (errors && errors.length) { %>
+      <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+        <% errors.forEach(function(e) { %><div><i class="bi bi-exclamation-circle me-1"></i><%= e %></div><% }); %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    <% } %>
+    <form action="/checkout" method="POST" novalidate>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      <div class="row g-4">
+        <div class="col-lg-7">
+          <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white fw-bold py-3"><i class="bi bi-truck me-2 text-primary"></i>Shipping Information</div>
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-6">
+                  <label class="form-label fw-semibold small">First Name <span class="text-danger">*</span></label>
+                  <input type="text" name="firstName" class="form-control" value="<%= user.firstName || '' %>" required />
+                </div>
+                <div class="col-6">
+                  <label class="form-label fw-semibold small">Last Name <span class="text-danger">*</span></label>
+                  <input type="text" name="lastName" class="form-control" value="<%= user.lastName || '' %>" required />
+                </div>
+                <div class="col-12">
+                  <label class="form-label fw-semibold small">Email Address <span class="text-danger">*</span></label>
+                  <input type="email" name="email" class="form-control" value="<%= user.email || '' %>" required />
+                </div>
+                <div class="col-12">
+                  <label class="form-label fw-semibold small">Phone Number</label>
+                  <input type="tel" name="phone" class="form-control" value="<%= user.phone || '' %>" placeholder="+1 (555) 000-0000" />
+                </div>
+                <div class="col-12">
+                  <label class="form-label fw-semibold small">Shipping Address <span class="text-danger">*</span></label>
+                  <textarea name="shippingAddress" class="form-control" rows="3" placeholder="Street address, City, State, ZIP" required><%= user.address || '' %></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-bold py-3"><i class="bi bi-credit-card-2-front me-2 text-primary"></i>Payment</div>
+            <div class="card-body">
+              <div class="stripe-placeholder mb-3">
+                <i class="bi bi-credit-card fs-1 text-primary d-block mb-2"></i>
+                <p class="mb-1 fw-semibold">Stripe Payment — Test Mode</p>
+                <p class="text-muted small mb-0">Test card: <strong>4242 4242 4242 4242</strong> · Any future expiry · Any CVV</p>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold small">Card Number</label>
+                <input type="text" class="form-control" placeholder="4242 4242 4242 4242" maxlength="19" />
+              </div>
+              <div class="row g-3">
+                <div class="col-6">
+                  <label class="form-label fw-semibold small">Expiry Date</label>
+                  <input type="text" class="form-control" placeholder="MM / YY" maxlength="7" />
+                </div>
+                <div class="col-6">
+                  <label class="form-label fw-semibold small">CVV</label>
+                  <input type="text" class="form-control" placeholder="123" maxlength="4" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <div class="order-summary-card">
+            <h5 class="fw-bold mb-3"><i class="bi bi-receipt me-2"></i>Your Order</h5>
+            <div class="mb-3" style="max-height:320px;overflow-y:auto;">
+              <% cartItems.forEach(function(item) { %>
+              <div class="d-flex gap-3 align-items-center mb-3 pb-3 border-bottom">
+                <img src="<%= item.photoPath %>" alt="<%= item.labelP %>" class="checkout-summary-img"
+                  onerror="this.src='https://placehold.co/60x60/f0f2f5/0d6efd?text=P'" />
+                <div class="flex-grow-1">
+                  <div class="small fw-semibold"><%= item.labelP %></div>
+                  <div class="small text-muted">Qty: <%= item.quantity %></div>
+                </div>
+                <div class="fw-semibold small">$<%= (parseFloat(item.priceP) * item.quantity).toFixed(2) %></div>
+              </div>
+              <% }); %>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted">Subtotal</span><span class="fw-semibold">$<%= total.toFixed(2) %></span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted">Shipping</span><span class="text-success fw-semibold"><i class="bi bi-truck me-1"></i>Free</span>
+            </div>
+            <hr />
+            <div class="d-flex justify-content-between mb-4">
+              <span class="fw-bold fs-5">Total</span><span class="total-line fs-5">$<%= total.toFixed(2) %></span>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 btn-lg">
+              <i class="bi bi-bag-check me-2"></i>Place Order — $<%= total.toFixed(2) %>
+            </button>
+            <p class="text-center text-muted small mt-3 mb-0"><i class="bi bi-shield-lock me-1"></i>Your order is secure and encrypted</p>
+          </div>
+        </div>
+      </div>
+    </form>
+  <% } %>
+</div>
+<%- include('partials/footer') %>

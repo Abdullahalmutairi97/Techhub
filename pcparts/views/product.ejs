@@ -1,0 +1,82 @@
+<% showHero = false; activeCategory = null; search = null; %>
+<%- include('partials/header') %>
+<div class="page-header">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="/" class="text-decoration-none" style="color:var(--cyan);">Home</a></li>
+        <li class="breadcrumb-item"><a href="/?category=<%= product.category %>" class="text-decoration-none" style="color:var(--cyan);"><%= product.category %></a></li>
+        <li class="breadcrumb-item active text-white-50"><%= product.labelP %></li>
+      </ol>
+    </nav>
+  </div>
+</div>
+<div class="container py-4">
+  <div class="row g-5">
+    <div class="col-md-5">
+      <img src="<%= product.photoPath %>" alt="<%= product.labelP %>" class="product-img-main w-100"
+        onerror="this.src='https://placehold.co/600x420/1a1a2e/00d4ff?text=<%= encodeURIComponent(product.category) %>'" />
+    </div>
+    <div class="col-md-7">
+      <span class="category-badge mb-2 d-inline-block" style="font-size:0.8rem;padding:4px 12px;"><%= product.category %></span>
+      <div class="text-muted small mb-1"><i class="bi bi-building me-1"></i><%= product.brand %></div>
+      <h1 class="h3 fw-bold mb-2"><%= product.labelP %></h1>
+      <div class="mb-3">
+        <% if (product.QtyP === 0) { %>
+          <span class="stock-badge-out" style="font-size:0.85rem;padding:4px 12px;">Out of Stock</span>
+        <% } else if (product.QtyP <= 5) { %>
+          <span class="stock-badge-low" style="font-size:0.85rem;padding:4px 12px;">Low Stock — only <%= product.QtyP %> left</span>
+        <% } else { %>
+          <span class="stock-badge-in" style="font-size:0.85rem;padding:4px 12px;"><i class="bi bi-check-circle me-1"></i>In Stock (<%= product.QtyP %> available)</span>
+        <% } %>
+      </div>
+      <div class="mb-3"><span style="font-size:2rem;font-weight:800;color:#0d6efd;">$<%= parseFloat(product.priceP).toFixed(2) %></span></div>
+      <p class="text-muted mb-4"><%= product.desP %></p>
+      <% if (product.specs) { %>
+        <div class="mb-4">
+          <h6 class="fw-bold mb-2"><i class="bi bi-list-check me-2"></i>Specifications</h6>
+          <div>
+            <% product.specs.split(',').forEach(function(spec) { %>
+              <span class="spec-badge"><%= spec.trim() %></span>
+            <% }); %>
+          </div>
+        </div>
+      <% } %>
+      <% if (user) { %>
+        <% if (product.QtyP > 0) { %>
+          <form action="/add-to-cart" method="POST" class="d-flex gap-3 align-items-end mb-3">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <input type="hidden" name="idP" value="<%= product.idP %>" />
+            <div>
+              <label class="form-label small fw-semibold mb-1">Quantity</label>
+              <input type="number" name="quantity" value="1" min="1" max="<%= product.QtyP %>" class="form-control" style="width:90px;" />
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg px-4"><i class="bi bi-cart-plus me-2"></i>Add to Cart</button>
+          </form>
+        <% } else { %>
+          <button class="btn btn-secondary btn-lg px-4 mb-3" disabled><i class="bi bi-x-circle me-2"></i>Out of Stock</button>
+        <% } %>
+      <% } else { %>
+        <div class="alert alert-info d-flex align-items-center gap-2 mb-3">
+          <i class="bi bi-info-circle-fill"></i>
+          <div>Please <a href="/login" class="alert-link">log in</a> or <a href="/register" class="alert-link">register</a> to add items to your cart.</div>
+        </div>
+      <% } %>
+      <div class="d-flex gap-2 flex-wrap mt-2">
+        <% if (user) { %>
+          <form action="/wishlist/add" method="POST" class="d-inline">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <input type="hidden" name="idP" value="<%= product.idP %>" />
+            <button type="submit" class="btn btn-outline-danger">
+              <i class="bi bi-heart me-1"></i>Add to Wishlist
+            </button>
+          </form>
+        <% } %>
+        <button class="btn btn-ai" onclick="alert('🤖 AI Compatibility Assistant — coming in Phase 2!\n\nThis feature will analyze your current parts list and suggest fully compatible components.')">
+          🤖 Find Compatible Parts with AI
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('partials/footer') %>

@@ -1,0 +1,82 @@
+<% showHero = false; activeCategory = null; search = null; %>
+<%- include('partials/header') %>
+
+<div class="page-header">
+  <div class="container">
+    <h2 class="mb-0"><i class="bi bi-bag-check me-2"></i>Order History</h2>
+  </div>
+</div>
+
+<div class="container py-4">
+  <% if (orders.length === 0) { %>
+    <div class="text-center py-5">
+      <i class="bi bi-bag-x display-3 text-muted mb-3 d-block"></i>
+      <h4>No orders yet</h4>
+      <p class="text-muted">You haven't placed any orders. Start shopping!</p>
+      <a href="/" class="btn btn-primary btn-lg mt-2"><i class="bi bi-grid me-2"></i>Browse Products</a>
+    </div>
+  <% } else { %>
+    <p class="text-muted mb-4"><%= orders.length %> order<%= orders.length !== 1 ? 's' : '' %> placed</p>
+
+    <div class="d-flex flex-column gap-4">
+      <% orders.forEach(function(order) { %>
+        <div class="card border-0 shadow-sm" style="border-radius:12px;">
+          <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center py-3 gap-2" style="border-radius:12px 12px 0 0;">
+            <div class="d-flex gap-4 flex-wrap">
+              <div>
+                <div class="small text-muted">Order ID</div>
+                <div class="fw-bold">#<%= order.idO %></div>
+              </div>
+              <div>
+                <div class="small text-muted">Date</div>
+                <div class="fw-semibold"><%= new Date(order.createdAt).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) %></div>
+              </div>
+              <div>
+                <div class="small text-muted">Total</div>
+                <div class="fw-bold text-primary">$<%= parseFloat(order.totalPrice).toFixed(2) %></div>
+              </div>
+            </div>
+            <div>
+              <%
+                const statusColors = {
+                  pending: 'warning',
+                  paid: 'info',
+                  shipped: 'primary',
+                  delivered: 'success',
+                  cancelled: 'danger'
+                };
+                const color = statusColors[order.orderStatus] || 'secondary';
+              %>
+              <span class="badge bg-<%= color %> text-<%= color === 'warning' ? 'dark' : 'white' %> px-3 py-2" style="font-size:0.82rem;">
+                <i class="bi bi-circle-fill me-1" style="font-size:0.5rem;vertical-align:middle;"></i>
+                <%= order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1) %>
+              </span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="row g-3">
+              <% order.items.forEach(function(item) { %>
+                <div class="col-12">
+                  <div class="d-flex align-items-center gap-3">
+                    <img src="<%= item.photo %>" alt="<%= item.name %>"
+                      style="width:60px;height:60px;object-fit:cover;border-radius:8px;background:#f0f2f5;flex-shrink:0;"
+                      onerror="this.src='https://placehold.co/60x60/f0f2f5/0d6efd?text=P'" />
+                    <div class="flex-grow-1">
+                      <div class="fw-semibold small"><%= item.name %></div>
+                      <div class="small text-muted">Qty: <%= item.qty %> × $<%= parseFloat(item.price).toFixed(2) %></div>
+                    </div>
+                    <div class="fw-bold small text-primary">$<%= (parseFloat(item.price) * parseInt(item.qty)).toFixed(2) %></div>
+                  </div>
+                </div>
+              <% }); %>
+            </div>
+            <hr class="mt-3 mb-2" />
+            <div class="small text-muted"><i class="bi bi-geo-alt me-1"></i><%= order.shippingAddress %></div>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>
