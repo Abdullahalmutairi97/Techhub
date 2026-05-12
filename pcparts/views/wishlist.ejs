@@ -37,7 +37,6 @@
               <div class="fw-bold text-primary mb-3">$<%= parseFloat(item.priceP).toFixed(2) %></div>
               <div class="d-flex gap-2">
                 <form action="/add-to-cart" method="POST" class="flex-grow-1">
-                  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                   <input type="hidden" name="idP" value="<%= item.idP %>" />
                   <input type="hidden" name="quantity" value="1" />
                   <button type="submit" class="btn btn-primary btn-sm w-100" <%= item.QtyP === 0 ? 'disabled' : '' %>>
@@ -45,7 +44,6 @@
                   </button>
                 </form>
                 <form action="/wishlist/remove/<%= item.idW %>" method="POST">
-                  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                   <button type="submit" class="btn btn-outline-danger btn-sm" title="Remove from wishlist">
                     <i class="bi bi-trash"></i>
                   </button>

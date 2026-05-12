@@ -32,7 +32,7 @@
       <% } else if (activeCategory) { %><i class="bi bi-tag me-1 text-primary"></i><%= activeCategory %>
       <% } else { %><i class="bi bi-lightning-charge me-1 text-warning"></i>All Products<% } %>
     </h5>
-    <span class="text-muted small"><%= products.length %> product<%= products.length !== 1 ? 's' : '' %></span>
+    <span class="text-muted small">Page <%= currentPage %> of <%= totalPages %></span>
   </div>
 
   <% if (products.length === 0) { %>
@@ -64,6 +64,24 @@
         </div>
       <% }); %>
     </div>
+  <% } %>
+
+  <% if (totalPages > 1) { %>
+    <nav class="mt-4 d-flex justify-content-center">
+      <ul class="pagination">
+        <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+          <a class="page-link" href="/?page=<%= currentPage - 1 %><%= activeCategory ? '&category=' + activeCategory : '' %><%= search ? '&search=' + encodeURIComponent(search) : '' %>">Previous</a>
+        </li>
+        <% for (let i = 1; i <= totalPages; i++) { %>
+          <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+            <a class="page-link" href="/?page=<%= i %><%= activeCategory ? '&category=' + activeCategory : '' %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"><%= i %></a>
+          </li>
+        <% } %>
+        <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+          <a class="page-link" href="/?page=<%= currentPage + 1 %><%= activeCategory ? '&category=' + activeCategory : '' %><%= search ? '&search=' + encodeURIComponent(search) : '' %>">Next</a>
+        </li>
+      </ul>
+    </nav>
   <% } %>
 </div>
 <%- include('partials/footer') %>

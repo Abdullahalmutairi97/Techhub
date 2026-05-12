@@ -47,7 +47,6 @@
                     <td class="text-center fw-semibold">$<%= parseFloat(item.priceP).toFixed(2) %></td>
                     <td class="text-center">
                       <form action="/cart/update" method="POST" class="d-inline">
-                        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                         <input type="hidden" name="idCart" value="<%= item.idCart %>" />
                         <input type="number" name="quantity" value="<%= item.quantity %>" min="1" max="<%= item.QtyP %>"
                           class="form-control form-control-sm text-center" style="width:70px;display:inline-block;" onchange="this.form.submit()" />
@@ -56,7 +55,6 @@
                     <td class="text-center fw-bold text-primary">$<%= (parseFloat(item.priceP) * item.quantity).toFixed(2) %></td>
                     <td>
                       <form action="/cart/remove/<%= item.idCart %>" method="POST" class="d-inline">
-                        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                         <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Remove this item?')"><i class="bi bi-trash"></i></button>
                       </form>
                     </td>
