@@ -1,0 +1,134 @@
+<%- include('partials/header') %>
+
+<div class="search-wrap">
+  <div class="container">
+    <form action="/" method="GET">
+      <% if (activeCategory) { %><input type="hidden" name="category" value="<%= activeCategory %>" /><% } %>
+      <div class="search-box" style="max-width:600px;">
+        <i class="bi bi-search ms-3 text-muted"></i>
+        <input type="text" id="searchInput" name="search"
+          placeholder="Search products, brands, specs..."
+          value="<%= typeof search !== 'undefined' && search ? search : '' %>" />
+        <button type="submit">Search</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="category-bar">
+  <div class="container">
+    <div class="d-flex flex-wrap gap-2">
+      <a href="/" class="category-pill <%= !activeCategory ? 'active' : '' %>">
+        <i class="bi bi-grid-3x3-gap"></i> All
+      </a>
+      <a href="/?category=CPU" class="category-pill <%= activeCategory === 'CPU' ? 'active' : '' %>">
+        <i class="bi bi-cpu"></i> CPU
+      </a>
+      <a href="/?category=Motherboard" class="category-pill <%= activeCategory === 'Motherboard' ? 'active' : '' %>">
+        <i class="bi bi-motherboard"></i> Motherboard
+      </a>
+      <a href="/?category=RAM" class="category-pill <%= activeCategory === 'RAM' ? 'active' : '' %>">
+        <i class="bi bi-memory"></i> RAM
+      </a>
+      <a href="/?category=GPU" class="category-pill <%= activeCategory === 'GPU' ? 'active' : '' %>">
+        <i class="bi bi-gpu-card"></i> GPU
+      </a>
+      <a href="/?category=Storage" class="category-pill <%= activeCategory === 'Storage' ? 'active' : '' %>">
+        <i class="bi bi-device-hdd"></i> Storage
+      </a>
+      <a href="/?category=PSU" class="category-pill <%= activeCategory === 'PSU' ? 'active' : '' %>">
+        <i class="bi bi-battery-charging"></i> PSU
+      </a>
+      <a href="/?category=Cooling" class="category-pill <%= activeCategory === 'Cooling' ? 'active' : '' %>">
+        <i class="bi bi-thermometer-snow"></i> Cooling
+      </a>
+      <a href="/?category=Case" class="category-pill <%= activeCategory === 'Case' ? 'active' : '' %>">
+        <i class="bi bi-box"></i> Case
+      </a>
+      <a href="/?category=Mini+PC" class="category-pill <%= activeCategory === 'Mini PC' ? 'active' : '' %>">
+        <i class="bi bi-pc"></i> Mini PC
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="products-grid">
+  <div class="container">
+
+    <div class="d-flex align-items-center justify-content-between mb-4">
+      <div>
+        <h5 class="section-title mb-0">
+          <% if (search) { %>Results for "<%= search %>"
+          <% } else if (activeCategory) { %><%= activeCategory %>
+          <% } else { %>All Products<% } %>
+        </h5>
+        <div class="text-muted" style="font-size:0.8125rem;margin-top:2px;"><%= products.length %> products &nbsp;·&nbsp; Page <%= currentPage %> of <%= totalPages %></div>
+      </div>
+      <% if (search || activeCategory) { %>
+        <a href="/" class="btn btn-outline-secondary btn-sm"><i class="bi bi-x me-1"></i>Clear</a>
+      <% } %>
+    </div>
+
+    <% if (products.length === 0) { %>
+      <div class="empty-state">
+        <i class="bi bi-search"></i>
+        <h4>No products found</h4>
+        <p>Try a different search or browse all categories.</p>
+        <a href="/" class="btn btn-primary">Browse Everything</a>
+      </div>
+    <% } else { %>
+      <div class="row g-3">
+        <% products.forEach(function(p) { %>
+          <div class="col-6 col-md-4 col-lg-3">
+            <a href="/product?id=<%= p.idP %>" class="product-card">
+              <img src="<%= p.photoPath %>" alt="<%= p.labelP %>" class="product-card-img"
+                onerror="this.src='https://placehold.co/400x200/f3f4f6/9ca3af?text=<%= encodeURIComponent(p.category) %>'" />
+              <div class="product-card-body">
+                <span class="category-badge"><%= p.category %></span>
+                <div class="brand-name"><%= p.brand %></div>
+                <div class="product-name"><%= p.labelP %></div>
+                <div class="product-price">SAR <%= parseFloat(p.priceP).toFixed(2) %></div>
+              </div>
+              <div class="product-card-footer">
+                <% if (p.QtyP === 0) { %>
+                  <span class="stock-badge-out"><i class="bi bi-x-circle me-1"></i>Out of Stock</span>
+                <% } else if (p.QtyP <= 5) { %>
+                  <span class="stock-badge-low"><i class="bi bi-exclamation-circle me-1"></i>Low Stock</span>
+                <% } else { %>
+                  <span class="stock-badge-in"><i class="bi bi-check-circle me-1"></i>In Stock</span>
+                <% } %>
+                <i class="bi bi-arrow-right text-muted" style="font-size:0.8rem;"></i>
+              </div>
+            </a>
+          </div>
+        <% }); %>
+      </div>
+    <% } %>
+
+    <% if (totalPages > 1) { %>
+      <nav class="mt-5 d-flex justify-content-center">
+        <ul class="pagination gap-1">
+          <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+            <a class="page-link" href="/?page=<%= currentPage - 1 %><%= activeCategory ? '&category=' + activeCategory : '' %><%= search ? '&search=' + encodeURIComponent(search) : '' %>">
+              <i class="bi bi-chevron-left"></i>
+            </a>
+          </li>
+          <% for (let i = 1; i <= totalPages; i++) { %>
+            <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+              <a class="page-link" href="/?page=<%= i %><%= activeCategory ? '&category=' + activeCategory : '' %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"><%= i %></a>
+            </li>
+          <% } %>
+          <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+            <a class="page-link" href="/?page=<%= currentPage + 1 %><%= activeCategory ? '&category=' + activeCategory : '' %><%= search ? '&search=' + encodeURIComponent(search) : '' %>">
+              <i class="bi bi-chevron-right"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    <% } %>
+
+  </div>
+</div>
+
+<%- include('partials/footer') %>
+

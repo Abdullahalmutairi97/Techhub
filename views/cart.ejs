@@ -1,0 +1,125 @@
+<% showHero = false; activeCategory = null; search = null; %>
+<%- include('partials/header') %>
+
+<div class="page-header">
+  <div class="container">
+    <h2><i class="bi bi-bag me-2"></i>Shopping Cart</h2>
+  </div>
+</div>
+
+<div class="container py-2 pb-5">
+  <% if (!user) { %>
+    <div class="empty-state">
+      <i class="bi bi-person-lock"></i>
+      <h4>Sign in to view your cart</h4>
+      <p>Your cart is tied to your account so you never lose it.</p>
+      <div class="d-flex gap-3 justify-content-center">
+        <a href="/login" class="btn btn-primary px-4">Sign In</a>
+        <a href="/register" class="btn btn-outline-secondary px-4">Register</a>
+      </div>
+    </div>
+
+  <% } else if (cartItems.length === 0) { %>
+    <div class="empty-state">
+      <i class="bi bi-bag-x"></i>
+      <h4>Your cart is empty</h4>
+      <p>Browse our catalog and add some components to get started.</p>
+      <a href="/" class="btn btn-primary px-4">Browse Products</a>
+    </div>
+
+  <% } else { %>
+    <% const total = cartItems.reduce((s, i) => s + parseFloat(i.priceP) * i.quantity, 0); %>
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <div style="background:#fff;border:1.5px solid #e5e7eb;border-radius:16px;overflow:hidden;">
+          <div class="table-responsive">
+            <table class="table cart-table mb-0">
+              <thead>
+                <tr>
+                  <th class="ps-4">Product</th>
+                  <th class="text-center">Price</th>
+                  <th class="text-center">Qty</th>
+                  <th class="text-center">Subtotal</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% cartItems.forEach(function(item) { %>
+                <tr>
+                  <td class="ps-4">
+                    <div class="d-flex align-items-center gap-3">
+                      <img src="<%= item.photoPath %>" alt="<%= item.labelP %>"
+                        width="72" height="72"
+                        style="object-fit:contain;border-radius:10px;background:#f9fafb;border:1px solid #e5e7eb;padding:4px;"
+                        onerror="this.src='https://placehold.co/72x72/f3f4f6/9ca3af?text=P'" />
+                      <div>
+                        <a href="/product?id=<%= item.idP %>" class="text-decoration-none" style="font-size:0.875rem;font-weight:600;color:#111827;"><%= item.labelP %></a>
+                        <div style="font-size:0.775rem;color:#9ca3af;margin-top:2px;"><%= item.category %> &nbsp;·&nbsp; <%= item.brand %></div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="text-center" style="font-size:0.875rem;font-weight:600;">SAR <%= parseFloat(item.priceP).toFixed(2) %></td>
+                  <td class="text-center">
+                    <form action="/cart/update" method="POST" class="d-inline">
+                      <input type="hidden" name="idCart" value="<%= item.idCart %>" />
+                      <input type="number" name="quantity" value="<%= item.quantity %>" min="1" max="<%= item.QtyP %>"
+                        class="form-control form-control-sm text-center"
+                        style="width:65px;display:inline-block;border-radius:8px;"
+                        onchange="this.form.submit()" />
+                    </form>
+                  </td>
+                  <td class="text-center" style="font-size:0.875rem;font-weight:700;">SAR <%= (parseFloat(item.priceP) * item.quantity).toFixed(2) %></td>
+                  <td class="text-center">
+                    <form action="/cart/remove/<%= item.idCart %>" method="POST">
+                      <button type="submit" class="btn btn-sm btn-outline-danger"
+                        style="border-radius:8px;width:32px;height:32px;padding:0;"
+                        onclick="return confirm('Remove this item?')">
+                        <i class="bi bi-trash" style="font-size:0.8rem;"></i>
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mt-3">
+          <a href="/" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left me-2"></i>Continue Shopping</a>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="order-summary-card">
+          <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#9ca3af;margin-bottom:1rem;">Order Summary</div>
+          <div class="d-flex justify-content-between mb-2" style="font-size:0.875rem;">
+            <span style="color:#6b7280;">Items (<%= cartItems.reduce((s, i) => s + i.quantity, 0) %>)</span>
+            <span style="font-weight:600;">SAR <%= total.toFixed(2) %></span>
+          </div>
+          <div class="d-flex justify-content-between mb-2" style="font-size:0.875rem;">
+            <span style="color:#6b7280;">Shipping</span>
+            <span style="font-weight:600;color:#16a34a;"><i class="bi bi-truck me-1"></i>Free</span>
+          </div>
+          <div class="d-flex justify-content-between mb-2" style="font-size:0.875rem;">
+            <span style="color:#6b7280;">Tax</span>
+            <span style="color:#9ca3af;">Calculated at checkout</span>
+          </div>
+          <div class="divider"></div>
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <span style="font-weight:700;">Total</span>
+            <span class="total-line">SAR <%= total.toFixed(2) %></span>
+          </div>
+          <a href="/checkout" class="btn btn-primary w-100" style="padding:0.7rem;font-size:0.9375rem;">
+            <i class="bi bi-lock me-2"></i>Checkout
+          </a>
+          <div class="text-center mt-3" style="font-size:0.775rem;color:#9ca3af;">
+            <i class="bi bi-shield-check me-1"></i>Secure &amp; encrypted checkout
+          </div>
+        </div>
+      </div>
+    </div>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>
+

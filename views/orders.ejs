@@ -33,7 +33,7 @@
               </div>
               <div>
                 <div class="small text-muted">Total</div>
-                <div class="fw-bold text-primary">$<%= parseFloat(order.totalPrice).toFixed(2) %></div>
+                <div class="fw-bold text-primary">SAR <%= parseFloat(order.totalPrice).toFixed(2) %></div>
               </div>
             </div>
             <div>
@@ -63,9 +63,9 @@
                       onerror="this.src='https://placehold.co/60x60/f0f2f5/0d6efd?text=P'" />
                     <div class="flex-grow-1">
                       <div class="fw-semibold small"><%= item.name %></div>
-                      <div class="small text-muted">Qty: <%= item.qty %> × $<%= parseFloat(item.price).toFixed(2) %></div>
+                      <div class="small text-muted">Qty: <%= item.qty %> × SAR <%= parseFloat(item.price).toFixed(2) %></div>
                     </div>
-                    <div class="fw-bold small text-primary">$<%= (parseFloat(item.price) * parseInt(item.qty)).toFixed(2) %></div>
+                    <div class="fw-bold small text-primary">SAR <%= (parseFloat(item.price) * parseInt(item.qty)).toFixed(2) %></div>
                   </div>
                 </div>
               <% }); %>
@@ -80,3 +80,4 @@
 </div>
 
 <%- include('partials/footer') %>
+

@@ -1,0 +1,53 @@
+<% showHero = false; activeCategory = null; search = null; %>
+<%- include('partials/header') %>
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div style="background:#fff;border:1.5px solid #e5e7eb;border-radius:16px;padding:2.5rem;text-align:center;">
+
+        <div class="confirm-icon mb-3"><i class="bi bi-check-circle-fill"></i></div>
+        <h3 style="font-weight:700;letter-spacing:-0.02em;margin-bottom:0.5rem;">Order confirmed!</h3>
+        <p style="color:#6b7280;font-size:0.9rem;margin-bottom:2rem;">Thank you for your purchase. We're getting it ready.</p>
+
+        <div style="background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:12px;padding:1.25rem;text-align:left;margin-bottom:1.5rem;">
+          <div class="row g-3">
+            <div class="col-6">
+              <div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#9ca3af;margin-bottom:0.25rem;">Order ID</div>
+              <div style="font-weight:700;color:#111827;">#<%= orderId %></div>
+            </div>
+            <div class="col-6">
+              <div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#9ca3af;margin-bottom:0.25rem;">Total</div>
+              <div style="font-weight:700;color:#2563eb;">SAR <%= total %></div>
+            </div>
+            <div class="col-6">
+              <div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#9ca3af;margin-bottom:0.25rem;">Status</div>
+              <span class="stock-badge-low">Pending</span>
+            </div>
+            <div class="col-6">
+              <div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#9ca3af;margin-bottom:0.25rem;">Payment</div>
+              <span class="stock-badge-out">Processing</span>
+            </div>
+            <div class="col-12">
+              <div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#9ca3af;margin-bottom:0.25rem;">Shipping To</div>
+              <div style="font-size:0.875rem;font-weight:500;color:#374151;"><%= shippingAddress %></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:10px;padding:1rem;text-align:left;margin-bottom:1.5rem;font-size:0.8125rem;color:#1e40af;">
+          <i class="bi bi-envelope me-2"></i>
+          Confirmation email sent to <strong><%= user.email %></strong>
+        </div>
+
+        <div class="d-flex gap-2">
+          <a href="/orders" class="btn btn-outline-secondary flex-grow-1">View Orders</a>
+          <a href="/" class="btn btn-primary flex-grow-1">Keep Shopping</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>
+

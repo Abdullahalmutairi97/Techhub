@@ -1,0 +1,97 @@
+<% showHero = false; activeCategory = null; search = null; %>
+<%- include('partials/header') %>
+
+<div class="page-header">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item"><a href="/?category=<%= product.category %>"><%= product.category %></a></li>
+        <li class="breadcrumb-item active"><%= product.labelP %></li>
+      </ol>
+    </nav>
+    <h1><%= product.labelP %></h1>
+  </div>
+</div>
+
+<div class="container py-2 pb-5">
+  <div class="row g-5">
+    <div class="col-md-5">
+      <img src="<%= product.photoPath %>" alt="<%= product.labelP %>" class="product-img-main"
+        onerror="this.src='https://placehold.co/600x400/f3f4f6/9ca3af?text=<%= encodeURIComponent(product.category) %>'" />
+    </div>
+
+    <div class="col-md-7">
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <span class="category-badge"><%= product.category %></span>
+        <% if (product.QtyP === 0) { %>
+          <span class="stock-badge-out"><i class="bi bi-x-circle me-1"></i>Out of Stock</span>
+        <% } else if (product.QtyP <= 5) { %>
+          <span class="stock-badge-low"><i class="bi bi-exclamation-circle me-1"></i>Only <%= product.QtyP %> left</span>
+        <% } else { %>
+          <span class="stock-badge-in"><i class="bi bi-check-circle me-1"></i>In Stock</span>
+        <% } %>
+      </div>
+
+      <div class="text-muted mb-1" style="font-size:0.8125rem;font-weight:500;"><%= product.brand %></div>
+      <h2 class="fw-700 mb-3" style="font-size:1.5rem;font-weight:700;letter-spacing:-0.02em;"><%= product.labelP %></h2>
+
+      <div class="price-tag mb-4">SAR <%= parseFloat(product.priceP).toFixed(2) %></div>
+
+      <p style="color:#6b7280;font-size:0.9rem;line-height:1.7;margin-bottom:1.5rem;"><%= product.desP %></p>
+
+      <% if (product.specs) { %>
+        <div class="mb-4">
+          <div style="font-size:0.8rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#9ca3af;margin-bottom:0.75rem;">Specifications</div>
+          <div>
+            <% product.specs.split(',').forEach(function(spec) { %>
+              <span class="spec-badge"><i class="bi bi-check2 text-primary me-1"></i><%= spec.trim() %></span>
+            <% }); %>
+          </div>
+        </div>
+      <% } %>
+
+      <div class="divider"></div>
+
+      <% if (user) { %>
+        <% if (product.QtyP > 0) { %>
+          <form action="/add-to-cart" method="POST" class="d-flex gap-3 align-items-end mb-3">
+            <input type="hidden" name="idP" value="<%= product.idP %>" />
+            <div>
+              <label class="form-label">Quantity</label>
+              <input type="number" name="quantity" value="1" min="1" max="<%= product.QtyP %>"
+                class="form-control" style="width:90px;" />
+            </div>
+            <button type="submit" class="btn btn-primary px-4" style="height:42px;">
+              <i class="bi bi-bag-plus me-2"></i>Add to Cart
+            </button>
+          </form>
+        <% } else { %>
+          <button class="btn btn-outline-secondary px-4 mb-3" disabled>
+            <i class="bi bi-x-circle me-2"></i>Out of Stock
+          </button>
+        <% } %>
+      <% } else { %>
+        <div class="p-3 rounded mb-3" style="background:#eff6ff;border:1.5px solid #bfdbfe;">
+          <i class="bi bi-info-circle text-primary me-2"></i>
+          <a href="/login" class="text-decoration-none fw-600" style="color:#1d4ed8;">Sign in</a>
+          <span style="color:#374151;"> or </span>
+          <a href="/register" class="text-decoration-none fw-600" style="color:#1d4ed8;">create an account</a>
+          <span style="color:#374151;"> to add items to your cart.</span>
+        </div>
+      <% } %>
+
+      <% if (user) { %>
+        <form action="/wishlist/add" method="POST" class="d-inline">
+          <input type="hidden" name="idP" value="<%= product.idP %>" />
+          <button type="submit" class="btn btn-outline-secondary">
+            <i class="bi bi-heart me-1"></i>Save to Wishlist
+          </button>
+        </form>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>
+
