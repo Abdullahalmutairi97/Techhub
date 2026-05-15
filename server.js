@@ -32,7 +32,7 @@ app.use(helmet({
       styleSrc:   ["'self'", 'https://cdn.jsdelivr.net', "'unsafe-inline'"],
       scriptSrc:  ["'self'", 'https://cdn.jsdelivr.net'],
       fontSrc:    ["'self'", 'https://cdn.jsdelivr.net'],
-      imgSrc:     ["'self'", 'data:', 'https://placehold.co', 'https://upload.wikimedia.org'],
+      imgSrc:     ["'self'", 'data:', 'https://placehold.co'],
     },
   },
 }));
