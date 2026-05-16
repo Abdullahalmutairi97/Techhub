@@ -62,6 +62,14 @@ app.set('view engine', 'ejs');                   // use EJS for HTML templates
 //    Applied per-route (see each GET/POST pair below).
 const csrfProtection = csurf();
 
+// Flash middleware — moves flash from session into res.locals before every route.
+// This ensures the flash is always cleared after one page load.
+app.use((req, res, next) => {
+  res.locals.flash = req.session.flash || null;
+  delete req.session.flash;
+  next();
+});
+
 
 // =============================================================
 // EMAIL SETUP  (used for password reset emails)
@@ -141,11 +149,10 @@ app.get('/', (req, res) => {
           activeCategory: category,
           search,
           cartCount,
-          flash:          req.session.flash || null,
+          flash:          res.locals.flash,
           currentPage:    page,
           totalPages,
         });
-        delete req.session.flash;
       });
     });
   });
@@ -173,9 +180,8 @@ app.get('/product', (req, res) => {
           product:  rows[0],
           user:     req.session.user || null,
           cartCount,
-          flash:    req.session.flash || null,
+          flash:    res.locals.flash,
         });
-        delete req.session.flash;
       });
     }
   );
@@ -244,9 +250,8 @@ app.get('/cart', (req, res) => {
           cartItems,
           user:     req.session.user,
           cartCount,
-          flash:    req.session.flash || null,
+          flash:    res.locals.flash,
         });
-        delete req.session.flash;
       });
     }
   );
@@ -296,10 +301,9 @@ app.get('/register', isGuest, csrfProtection, (req, res) => {
     cartCount: 0,
     errors:    [],
     formData:  {},
-    flash:     req.session.flash || null,
+    flash:     res.locals.flash,
     csrfToken: req.csrfToken(),
   });
-  delete req.session.flash;
 });
 
 app.post('/register', isGuest, csrfProtection, async (req, res) => {
@@ -367,10 +371,9 @@ app.get('/login', isGuest, csrfProtection, (req, res) => {
     user:      null,
     cartCount: 0,
     errors:    [],
-    flash:     req.session.flash || null,
+    flash:     res.locals.flash,
     csrfToken: req.csrfToken(),
   });
-  delete req.session.flash;
 });
 
 app.post('/login', isGuest, csrfProtection, (req, res) => {
@@ -442,10 +445,9 @@ app.get('/forgot-password', isGuest, csrfProtection, (req, res) => {
     user:      null,
     cartCount: 0,
     sent:      false,
-    flash:     req.session.flash || null,
+    flash:     res.locals.flash,
     csrfToken: req.csrfToken(),
   });
-  delete req.session.flash;
 });
 
 app.post('/forgot-password', isGuest, csrfProtection, (req, res) => {
@@ -588,10 +590,9 @@ app.get('/checkout', isAuth, csrfProtection, (req, res) => {
           user:      req.session.user,
           cartCount,
           errors:    [],
-          flash:     req.session.flash || null,
+          flash:     res.locals.flash,
           csrfToken: req.csrfToken(),
         });
-        delete req.session.flash;
       });
     }
   );
@@ -701,9 +702,8 @@ app.get('/wishlist', isAuth, (req, res) => {
           wishlistItems,
           user:     req.session.user,
           cartCount,
-          flash:    req.session.flash || null,
+          flash:    res.locals.flash,
         });
-        delete req.session.flash;
       });
     }
   );
@@ -794,9 +794,8 @@ app.get('/orders', isAuth, (req, res) => {
           orders:   parsedOrders,
           user:     req.session.user,
           cartCount,
-          flash:    req.session.flash || null,
+          flash:    res.locals.flash,
         });
-        delete req.session.flash;
       });
     }
   );
@@ -822,7 +821,6 @@ app.get('/profile', isAuth, csrfProtection, (req, res) => {
         flash:       req.session.flash || null,
         csrfToken:   req.csrfToken(),
       });
-      delete req.session.flash;
     });
   });
 });
