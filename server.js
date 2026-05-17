@@ -62,12 +62,16 @@ app.set('view engine', 'ejs');                   // use EJS for HTML templates
 //    Applied per-route (see each GET/POST pair below).
 const csrfProtection = csurf();
 
-// Flash middleware — moves flash from session into res.locals before every route.
-// This ensures the flash is always cleared after one page load.
+// Flash middleware — captures flash from session, saves its deletion, then continues.
 app.use((req, res, next) => {
-  res.locals.flash = req.session.flash || null;
-  delete req.session.flash;
-  next();
+  if (req.session.flash) {
+    res.locals.flash = req.session.flash;
+    delete req.session.flash;
+    req.session.save(() => next());
+  } else {
+    res.locals.flash = null;
+    next();
+  }
 });
 
 
@@ -214,7 +218,6 @@ app.post('/add-to-cart', isAuth, (req, res) => {
         [userId, productId, quantity, quantity],
         (err2) => {
           if (err2) { console.error(err2); return res.status(500).send('Database error'); }
-          req.session.flash = { type: 'success', msg: 'Item added to cart!' };
           res.redirect(`/product?id=${productId}`);
         }
       );
